@@ -1,4 +1,4 @@
-# travel-agent
+# minimal_travel_agent
 
 一个用于学习 Agent 基本结构的迷你 Python 旅游规划项目。
 
