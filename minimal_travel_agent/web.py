@@ -24,7 +24,7 @@ from pathlib import Path
 
 # 从 main.py 引入 agent 主流程函数。
 # web.py 收到网页请求后，最终就是调用这个函数生成行程。
-from main import run_agent_from_request
+from main import run_agent_with_trace
 
 # 从 tools.py 引入 TripRequest。
 # 前端传来的表单数据，会先整理成 TripRequest，再交给 agent。
@@ -139,14 +139,14 @@ class TravelAgentHandler(BaseHTTPRequestHandler):
         )
 
         # 这里是真正调用 agent 的地方。
-        # run_agent_from_request 在 main.py 里定义。
+        # run_agent_with_trace 在 main.py 里定义。
         #
         # web.py 本身不负责规划，它只是把数据交给 agent。
-        result = run_agent_from_request(request)
+        agent_output = run_agent_with_trace(request)
 
-        # 把 agent 生成的结果包装成 JSON 返回给前端。
-        # 前端 app.js 会拿到 result，然后显示在页面上。
-        self._send_json({"result": result})
+        # 把 agent 生成的结果和执行轨迹包装成 JSON 返回给前端。
+        # 前端 app.js 会拿到 result 和 traces，然后显示在页面上。
+        self._send_json(agent_output)
 
     def log_message(self, format, *args):
         # 默认情况下，Python HTTP server 会在终端打印很多访问日志。

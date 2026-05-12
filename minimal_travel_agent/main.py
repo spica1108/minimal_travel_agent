@@ -120,6 +120,50 @@ def decide_next_step(done_steps: set[str]) -> str:
     return "final"
 
 
+def run_agent_with_trace(request: TripRequest) -> dict:
+    # 这个函数和 run_agent_from_request 很像。
+    #
+    # 区别是：
+    # run_agent_from_request 只返回最终结果字符串；
+    # run_agent_with_trace 会同时返回：
+    # - result: 最终结果
+    # - traces: agent 每一步做了什么
+    #
+    # 这样前端页面就能显示 agent 的执行过程。
+    done_steps: set[str] = set()
+    notes: list[str] = []
+    traces: list[str] = []
+
+    while True:
+        next_step = decide_next_step(done_steps)
+
+        if next_step == "destination":
+            traces.append("Step 1: 调用 recommend_destination 工具，推荐目的地。")
+            notes.append(recommend_destination(request))
+            done_steps.add("destination")
+            continue
+
+        if next_step == "budget":
+            traces.append("Step 2: 调用 estimate_budget 工具，估算预算是否足够。")
+            notes.append(estimate_budget(request))
+            done_steps.add("budget")
+            continue
+
+        if next_step == "itinerary":
+            traces.append("Step 3: 调用 build_itinerary 工具，生成每日行程。")
+            notes.append("行程草案：\n" + build_itinerary(request))
+            done_steps.add("itinerary")
+            continue
+
+        traces.append("Step 4: 所有工具调用完成，汇总最终答案。")
+        break
+
+    return {
+        "result": "\n\n".join(notes),
+        "traces": traces,
+    }
+
+
 def run_agent_from_request(request: TripRequest) -> str:
     # 这是整个项目最核心的函数。
     #
@@ -131,64 +175,9 @@ def run_agent_from_request(request: TripRequest) -> str:
     # 4. 继续判断下一步
     # 5. 最后输出完整结果
 
-    # done_steps 用来记录已经完成了哪些步骤。
-    # set() 表示创建一个空集合。
-    done_steps: set[str] = set()
-
-    # notes 用来保存每个工具返回的文字结果。
-    # [] 表示创建一个空列表。
-    notes: list[str] = []
-
-    # while True 表示无限循环。
-    #
-    # agent loop 的核心就是这个：
-    # 不断判断下一步，不断调用工具，直到该结束。
-    while True:
-        # 调用 decide_next_step，问它：
-        # “根据目前已经完成的步骤，我下一步该做什么？”
-        next_step = decide_next_step(done_steps)
-
-        # 如果下一步是推荐目的地：
-        if next_step == "destination":
-            # 调用 recommend_destination 工具。
-            # 工具会返回一段推荐文字。
-            #
-            # notes.append(...) 表示把这段文字加入 notes 列表末尾。
-            notes.append(recommend_destination(request))
-
-            # done_steps.add(...) 表示往集合里加入一个已完成步骤。
-            # 这样下一轮循环就知道 destination 已经做过了。
-            done_steps.add("destination")
-
-            # continue 表示跳过本轮后面的代码，直接进入下一轮 while 循环。
-            continue
-
-        # 如果下一步是估算预算：
-        if next_step == "budget":
-            notes.append(estimate_budget(request))
-            done_steps.add("budget")
-            continue
-
-        # 如果下一步是生成行程：
-        if next_step == "itinerary":
-            # "\n" 表示换行。
-            # 这里把标题 "行程草案：" 和工具生成的行程文字拼接起来。
-            notes.append("行程草案：\n" + build_itinerary(request))
-            done_steps.add("itinerary")
-            continue
-
-        # 如果 next_step 不是上面三种，说明 decide_next_step 返回了 "final"。
-        # break 表示结束 while 循环。
-        break
-
-    # notes 里现在有三段文字：
-    # 1. 目的地推荐
-    # 2. 预算估算
-    # 3. 行程草案
-    #
-    # "\n\n".join(notes) 会用两个换行把它们拼成最终答案。
-    return "\n\n".join(notes)
-
+    # 这里复用 run_agent_with_trace，避免把 agent loop 写两遍。
+    # ["result"] 表示从返回的字典里取最终结果。
+    return run_agent_with_trace(request)["result"]
 
 def run_agent(user_input: str) -> str:
     # 这个函数是给命令行版本用的。

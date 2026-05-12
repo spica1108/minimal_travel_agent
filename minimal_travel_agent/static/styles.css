@@ -137,7 +137,7 @@ button:disabled {
 
 #result {
   flex: 1;
-  margin: 22px 0 0;
+  margin: 18px 0 0;
   white-space: pre-wrap;
   overflow: auto;
   border-radius: 8px;
@@ -147,6 +147,33 @@ button:disabled {
   font-family: "Cascadia Mono", Consolas, monospace;
   font-size: 14px;
   padding: 22px;
+}
+
+.trace-box {
+  margin-top: 20px;
+  border: 1px solid #d9e5d8;
+  border-radius: 8px;
+  background: #f7faf5;
+  padding: 16px 18px;
+}
+
+.trace-title {
+  margin: 0 0 10px;
+  color: #324339;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+#traces {
+  margin: 0;
+  padding-left: 20px;
+  color: #4d5d52;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+#traces li + li {
+  margin-top: 6px;
 }
 
 @media (max-width: 860px) {
