@@ -1,3 +1,14 @@
+# tools.py 是这个项目的“工具箱”。
+#
+# 在 agent 项目里，通常会把能力拆成一个个工具：
+# - 推荐目的地
+# - 估算预算
+# - 生成行程
+#
+# main.py 负责决定“下一步调用哪个工具”。
+# tools.py 负责提供这些工具的具体实现。
+
+
 # dataclass 是 Python 自带的一个小工具。
 # 它可以帮我们快速创建“只用来存数据的类”。
 # 这里的 TripRequest 就是用来保存一次旅行需求的数据。
@@ -6,15 +17,27 @@ from dataclasses import dataclass
 
 @dataclass
 class TripRequest:
+    # TripRequest 用来保存“用户的一次旅行需求”。
+    #
+    # 比如用户说：
+    # “我从上海出发，去日本，玩 5 天，预算 8000，想轻松一点”
+    #
+    # 程序会把这句话整理成下面这些字段：
+    # departure   出发地
+    # destination 目的地
+    # days        旅行天数
+    # budget      预算
+    # style       旅行偏好
+
     # 下面这 5 行叫“字段”。
     # 冒号后面的 str / int 是类型提示：
     # str 表示字符串，比如 "上海"、"日本"
     # int 表示整数，比如 5、8000
-    departure: str
-    destination: str
-    days: int
-    budget: int
-    style: str
+    departure: str  # 出发地
+    destination: str    # 目的地
+    days: int   # 旅行天数
+    budget: int # 预算
+    style: str # 旅行风格
 
 
 # 这是一个字典 dict。
@@ -84,6 +107,7 @@ def build_itinerary(request: TripRequest) -> str:
     # 注意：Python 的 range 右边是不包含的，所以要写 days + 1。
     for day in range(1, request.days + 1):
         # 第一天：通常是出发和入住，所以安排轻一点。
+        # append 是 Python 列表的方法，意思是：往列表最后加一个东西
         if day == 1:
             plan.append(f"Day {day}: 从{request.departure}出发，抵达后入住酒店，晚上轻松逛街。")
 
