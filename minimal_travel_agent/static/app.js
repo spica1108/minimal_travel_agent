@@ -2,6 +2,10 @@ const form = document.querySelector("#plan-form");
 const result = document.querySelector("#result");
 const traces = document.querySelector("#traces");
 const button = form.querySelector("button");
+const apiUrl =
+  window.location.protocol === "file:"
+    ? "http://127.0.0.1:8000/api/plan"
+    : "/api/plan";
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -15,13 +19,16 @@ form.addEventListener("submit", async (event) => {
   data.budget = Number(data.budget);
 
   try {
-    const response = await fetch("/api/plan", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
     const payload = await response.json();
     result.textContent = payload.result;
     traces.innerHTML = payload.traces.map((trace) => `<li>${trace}</li>`).join("");
