@@ -1,14 +1,24 @@
+import re
+
 from tools import TripRequest, build_itinerary, estimate_budget, recommend_destination
 
 
 def parse_request(user_input: str) -> TripRequest:
-    """先用固定示例解析，避免一开始被自然语言解析复杂度卡住。"""
+    days_match = re.search(r"(\d+)\s*天", user_input)
+    budget_match = re.search(r"预算\s*(\d+)", user_input)
+    destination = "日本"
+
+    for place in ["日本", "泰国", "韩国"]:
+        if place in user_input:
+            destination = place
+            break
+
     return TripRequest(
         departure="上海",
-        destination="日本",
-        days=5,
-        budget=8000,
-        style="轻松、不赶路、喜欢美食和城市散步",
+        destination=destination,
+        days=int(days_match.group(1)) if days_match else 5,
+        budget=int(budget_match.group(1)) if budget_match else 8000,
+        style="轻松、不赶路、喜欢美食和城市散步" if "轻松" in user_input else "经典景点优先",
     )
 
 
@@ -22,8 +32,7 @@ def decide_next_step(done_steps: set[str]) -> str:
     return "final"
 
 
-def run_agent(user_input: str) -> str:
-    request = parse_request(user_input)
+def run_agent_from_request(request: TripRequest) -> str:
     done_steps: set[str] = set()
     notes: list[str] = []
 
@@ -48,6 +57,10 @@ def run_agent(user_input: str) -> str:
         break
 
     return "\n\n".join(notes)
+
+
+def run_agent(user_input: str) -> str:
+    return run_agent_from_request(parse_request(user_input))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Minimal Travel Agent</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="planner">
+        <div class="intro">
+          <p class="eyebrow">Minimal Travel Agent</p>
+          <h1>旅行规划助手</h1>
+          <p class="summary">输入几个条件，让 agent 调用目的地、预算和行程工具生成计划。</p>
+        </div>
+
+        <form id="plan-form" class="form">
+          <label>
+            出发地
+            <input name="departure" value="上海" />
+          </label>
+
+          <label>
+            目的地
+            <select name="destination">
+              <option>日本</option>
+              <option>泰国</option>
+              <option>韩国</option>
+            </select>
+          </label>
+
+          <label>
+            天数
+            <input name="days" type="number" min="1" max="14" value="5" />
+          </label>
+
+          <label>
+            预算
+            <input name="budget" type="number" min="1000" step="500" value="8000" />
+          </label>
+
+          <label class="wide">
+            偏好
+            <textarea name="style" rows="3">轻松、不赶路、喜欢美食和城市散步</textarea>
+          </label>
+
+          <button type="submit">生成行程</button>
+        </form>
+      </section>
+
+      <section class="result-panel">
+        <div class="result-header">
+          <p class="eyebrow">Agent Output</p>
+          <h2>规划结果</h2>
+        </div>
+        <pre id="result">还没有生成行程。</pre>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

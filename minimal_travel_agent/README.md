@@ -2,7 +2,7 @@
 
 这是一个零依赖的 Python 迷你旅游 agent，用来理解 agent 的基本结构。
 
-## 运行
+## 命令行运行
 
 ```bash
 cd minimal_travel_agent
@@ -37,3 +37,16 @@ python main.py
 - `tools.py`: 旅游相关工具，比如推荐目的地、估算预算、生成行程
 
 后续可以把 `decide_next_step()` 换成真正的大模型调用。
+
+## 网页运行
+
+```bash
+cd minimal_travel_agent
+python web.py
+```
+
+然后打开：
+
+```text
+http://127.0.0.1:8000
+```

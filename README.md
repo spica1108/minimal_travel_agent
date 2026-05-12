@@ -14,3 +14,16 @@
 cd minimal_travel_agent
 python main.py
 ```
+
+网页运行：
+
+```bash
+cd minimal_travel_agent
+python web.py
+```
+
+然后打开：
+
+```text
+http://127.0.0.1:8000
+```
